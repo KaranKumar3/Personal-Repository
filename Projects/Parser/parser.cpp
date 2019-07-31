@@ -1,16 +1,16 @@
 //
 // Created by Karan Kumar
 // comp code: g++ inputbuf.cc lexer.cc parser.cpp
-// test code: ./test.sh
+// test code: ./test1.sh
 //
 
 #include "parser.h"
 
 #include <iostream>
 #include <cstdlib>
-#include <map>
-//#include <cstring>
 #include <string>
+#include <map>
+
 
 using namespace std;
 
@@ -22,8 +22,10 @@ Token t;
 
 symTableNode* head;
 symTableNode* temp;
+symTableNode* temp2;
+
 symTableNode* n;
-symTableNode* ptr;
+
 int pp;
 string currOut = "";
 string totalOut= "";
@@ -270,19 +272,20 @@ void Parser::syntax_error(){
 void Parser::addList(symTableNode* node) {
     temp->next = node;
     node->prev = temp;
-    node->next = nullptr;
+    node->next = NULL;
     temp = temp->next;
 }
 
 void Parser::search(string ID) {
     bool matching = false;
-    ptr = temp;
-    if (ptr->prev == nullptr) {
-        if (ptr->name == ID) {
-            if (ptr->scope != currScope && ptr->scope != "::") currOut += "?.";
+    temp2 = temp;
+    if (temp2->prev == NULL) {
+        if (temp2->name == ID) {
+            if (temp2->scope != currScope && temp2->scope != "::")
+                currOut += "?.";
             else {
-                currOut += ptr->scope;
-                if (ptr->scope != "::") currOut += ".";
+                currOut += temp2->scope;
+                if (temp2->scope != "::") currOut += ".";
             }
             currOut += ID;
         }
@@ -292,16 +295,16 @@ void Parser::search(string ID) {
         }
     }
     else {
-        while (ptr != nullptr && !matching) {
-            if (ptr->name == ID) {
-                if ((ptr->scope != currScope && (ptr->pp == 0 || ptr->pp == 1))
-                    || ptr->scope == currScope || ptr->scope == "::") {
-                    currOut += ptr->scope;
-                    if (ptr->scope != "::") currOut += ".";
+        while (temp2 != NULL && !matching) {
+            if (temp2->name == ID) {
+                if ((temp2->scope != currScope && (temp2->pp == 0 || temp2->pp == 1))
+                    || temp2->scope == currScope || temp2->scope == "::") {
+                    currOut += temp2->scope;
+                    if (temp2->scope != "::") currOut += ".";
                     matching = true;
                 }
             }
-            ptr = ptr->prev;
+            temp2 = temp2->prev;
         }
         if (!matching) currOut += "?.";
         currOut += ID;
@@ -311,8 +314,8 @@ void Parser::search(string ID) {
 int main()
 {
     n = new symTableNode;
-    n->next = nullptr;
-    n->prev = nullptr;
+    n->next = NULL;
+    n->prev = NULL;
     n->pp = 21;//just to count for pp head
     head = n;
     temp = n;
